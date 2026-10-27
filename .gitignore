@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.spec
+.pytest_cache/
+
+# Local app data / secrets
+settings.json
+history.json
+images/
+
+# Build/test artifacts
+*.log
+*.tmp
+*.bak
+screenshots/
+test-images/
+.DS_Store
