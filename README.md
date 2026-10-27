@@ -1,151 +1,228 @@
-# Clippr PY — Python + PyQt6
+# Clippr PY
 
-A cross-platform clipboard manager with saved tabs, image history, preview,
-screen-region capture, OCR, strip-images, eight themes, and a tray icon.
+<img src="assets/clippr.png" width="96" alt="Clippr PY icon">
 
-This is the Python/PyQt6 edition of Clippr, published as **Clippr PY**. It runs on
-**macOS, Windows and Linux** from the same codebase. The original PowerShell +
-WinForms edition lives in the separate Clippr repository and is Windows-only.
+**Clippr PY** is the Python + PyQt6 edition of Clippr: a cross-platform
+clipboard manager with text and image history, saved tabs, search, preview,
+OCR, screen snips, strip-images, eight themes, and a system tray.
 
-## Features
+It runs on **Microsoft Windows** and **Apple macOS** from the same codebase,
+and also works on Linux with a desktop environment.
 
-- **Clipboard history** for text and images, with deduplication.
-- **All items / Text / Images** views and user-created tabs.
-- **Search** across text, image captions and OCR results.
-- **Preview** window with copy, image preview and **OCR + COPY**.
-- **Strip images (text only)** for Excel/Office clips that contain both a
-  bitmap and text; enabled by default.
-- **Screen-region capture** with a dimmed selection overlay.
-- **OCR with bring-your-own providers**: built-in Windows/macOS/Tesseract engines,
-  OCR.space, Azure AI Vision, Google Cloud Vision, and PaddleOCR/self-hosted
-  servers with API-key or OAuth2 authentication.
-- **Auto-name new images from OCR** (optional; uses the selected provider).
+- GitHub: <https://github.com/Shobhit-pant/Clippr-PY>
+- Original Windows PowerShell edition: <https://github.com/Shobhit-pant/Clippr>
+
+---
+
+## What it does
+
+- Captures copied **text** and **images** automatically.
+- Remembers history in `history.json`; image files live beside it.
+- **Strip images (text only)** removes the redundant bitmap from Excel/Office
+  clipboard contents, so `Ctrl+V`/`Cmd+V` pastes text instead of a snapshot.
+- **New Snip** captures a drag-selected area of the primary screen.
+- **Preview** shows the full text or image.
+- **OCR + COPY** recognizes text and copies it to the clipboard.
+- **Search** across text, image captions, and saved OCR text.
+- **Views and tabs**: All items, Text, Images, plus your own tabs.
 - **Eight themes**: Swiss Paper, Midnight Brass, Neo-Brutalist, Calm Slate,
-  Forest Ink, Rose Quartz, Sunset Ember, and Mono Terminal.
-- **System tray** with reopen, capture, pause, settings and quit.
-- **Start at login** (Windows Run key, macOS LaunchAgent, Linux autostart).
-- **Single instance**, JSON persistence, history limits, image pruning.
-- Theme-aware "still running in the tray" toast with the Clippr icon.
+  Forest Ink, Rose Quartz, Sunset Ember, Mono Terminal.
+- **Bring-your-own OCR**: Windows OCR, Apple Vision, Tesseract, OCR.space,
+  Azure AI Vision, Google Cloud Vision, and PaddleOCR/self-hosted servers.
+- System tray, pause/resume capture, start at login, single instance, and a
+  themed "still running" toast.
 
-## Requirements
+---
 
-- Python **3.10+** (tested on 3.14).
-- PyQt6 6.5+.
-- Pillow (tests / optional OCR fallback).
+## Install on Microsoft Windows
 
-### Windows
+### 1. Install Python
+
+Install **Python 3.10 or newer** (3.12/3.13 are good choices):
+
+- Download from <https://www.python.org/downloads/windows/>
+- During setup, enable **Add python.exe to PATH**.
+- Or use winget:
 
 ```powershell
-python -m pip install -r requirements.txt
-python main.py
+winget install Python.Python.3.12
+```
+
+Check it:
+
+```powershell
+py --version
+```
+
+If `py` is not available, use `python` instead.
+
+### 2. Get the project
+
+```powershell
+cd "D:\path\to\Clippr-PY"
+```
+
+If you cloned from GitHub instead:
+
+```powershell
+git clone https://github.com/Shobhit-pant/Clippr-PY.git
+cd Clippr-PY
+```
+
+### 3. Create a virtual environment and install dependencies
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install --upgrade pip
+py -m pip install -r requirements.txt
+```
+
+If PowerShell blocks activation, allow it for this terminal only:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+### 4. Run Clippr PY
+
+```powershell
+py main.py
 ```
 
 Or double-click `run_windows.bat`.
 
-Windows OCR needs no extra install; it uses the built-in OCR language pack.
-If no OCR language is installed, Windows Settings → Time & Language →
-Language & region → English → Language options → Optical character recognition.
+### 5. First use
 
-### macOS
+1. Copy some text or an image.
+2. Open Clippr PY and confirm it appears in history.
+3. Select an entry to enable **Copy**, **Preview**, **OCR**, and **Delete**.
+4. Try the red **NEW SNIP** button at the top, then drag a rectangle.
+5. Open **SETTINGS** to choose a theme, adjust strip-images, or configure OCR.
+
+### Windows OCR
+
+Windows OCR uses the built-in `Windows.Media.Ocr` engine. No API key is needed.
+If it reports that no OCR language is installed:
+
+1. Open **Settings > Time & Language > Language & region**.
+2. Select English (or your language) > **Language options**.
+3. Install **Optical character recognition**.
+4. Restart Clippr PY, or choose **Tesseract**/a cloud provider in
+   **Settings > OCR**.
+
+### Build a Windows .exe
+
+```powershell
+.\build_windows.ps1
+```
+
+The executable is written to `dist\ClipprPy\ClipprPy.exe`. Build on Windows;
+PyInstaller cannot cross-compile a Windows executable from macOS.
+
+Windows SmartScreen may warn about an unsigned executable. Use **More info >
+Run anyway** for a build you made yourself, or sign the executable for
+distribution.
+
+---
+
+## Install on Apple macOS
+
+### 1. Install Python
+
+Use **Python 3.10 or newer**. The old Python that comes with Xcode Command Line
+Tools may be too old.
+
+- Download the macOS installer from <https://www.python.org/downloads/macos/>.
+- Or with Homebrew:
+
+```bash
+brew install python
+```
+
+Check it:
+
+```bash
+python3 --version
+```
+
+### 2. Get the project
+
+```bash
+cd ~/Clippr-PY
+```
+
+Or clone it:
+
+```bash
+git clone https://github.com/Shobhit-pant/Clippr-PY.git
+cd Clippr-PY
+```
+
+### 3. Create a virtual environment and install dependencies
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r requirements-macos.txt
+```
+
+`requirements-macos.txt` includes **PyObjC Vision** and **Quartz** for Apple's
+built-in OCR.
+
+### 4. Run Clippr PY
+
+```bash
 python main.py
 ```
 
-Or `chmod +x run_macos.command` and double-click it.
-
-macOS uses **Apple Vision** for OCR through PyObjC. Grant **Screen Recording**
-permission in System Settings → Privacy & Security → Screen Recording for
-region capture. Clipboard access does not need a permission prompt.
-
-### Linux
+Or make the launcher executable once and double-click it:
 
 ```bash
-python3 -m pip install -r requirements.txt
-python3 main.py
+chmod +x run_macos.command
+./run_macos.command
 ```
 
-For OCR install Tesseract and `pytesseract`:
+If Gatekeeper blocks a downloaded script, right-click it and choose **Open**.
+
+### 5. Allow screen recording
+
+**New Snip** captures the primary display. On macOS:
+
+1. Open **System Settings > Privacy & Security > Screen Recording**.
+2. Enable **Terminal**, **iTerm**, **Python**, or **Clippr** (whichever launches
+   the app).
+3. Quit and reopen Clippr PY if macOS does not apply the permission immediately.
+
+Without this permission a snip may be empty or the system may silently block
+the capture.
+
+### macOS OCR
+
+Apple Vision OCR is used through PyObjC. It is installed by
+`requirements-macos.txt`; no API key is required.
+
+If Vision is unavailable:
+
+- Install Tesseract (`brew install tesseract`) and `pip install pytesseract`,
+  then choose **Tesseract** in **Settings > OCR**, or
+- configure **OCR.space**, **Azure AI Vision**, **Google Cloud Vision**, or a
+  self-hosted **PaddleOCR** server.
+
+Selecting **Windows OCR** on macOS intentionally fails with a clear message —
+that engine exists only on Windows. **Auto** selects Apple Vision on macOS.
+
+### Build a macOS .app
+
+Install the Xcode Command Line Tools if `sips` or `iconutil` are missing:
 
 ```bash
-sudo apt install tesseract-ocr
-python3 -m pip install pytesseract
+xcode-select --install
 ```
 
-## Keyboard shortcuts
-
-| Shortcut | Action |
-|---|---|
-| `Ctrl/Cmd + F` | Focus search |
-| `Ctrl/Cmd + Shift + S` | Create a new snip (screen region) |
-| `Delete` (list focused) | Delete selected item |
-| `Enter` / double-click | Preview selected item |
-
-## Data
-
-| Platform | Folder |
-|---|---|
-| Windows | `%APPDATA%\ClipprPy` |
-| macOS | `~/Library/Application Support/ClipprPy` |
-| Linux | `~/.local/share/ClipprPy` |
-
-Files: `history.json`, `settings.json`, `images/`. Set `CLIPPR_DATA_DIR` to
-override the folder (used by the tests).
-
-The Python app uses an isolated data folder, separate from the original
-PowerShell app, so the two histories never mix.
-
-## OCR
-
-Open **Settings > OCR** to choose an engine and enter provider keys. Keys are
-stored locally in `settings.json` and are sent only to the provider you select.
-The **AUTHENTICATE** button runs the selected provider against a small test
-image before you save.
-
-### Built-in engines
-
-| Option | Platform | Notes |
-|---|---|---|
-| **Auto** | All | Windows OCR on Windows, Apple Vision on macOS, Tesseract elsewhere; native failure falls back to Tesseract |
-| **Windows OCR** | Windows only | Windows.Media.Ocr; no key or extra package |
-| **macOS Vision** | macOS only | Apple Vision via PyObjC |
-| **Tesseract** | All | Requires `tesseract` + `pytesseract` |
-
-Explicit **Windows OCR** or **macOS Vision** choices fail with a clear message
-on the other operating system. If you do not have either native engine, choose
-**Tesseract**, **OCR.space**, or another cloud provider.
-
-### Bring your own OCR
-
-| Provider | Required settings |
-|---|---|
-| **OCR.space** | API key; language (default `eng`) |
-| **Azure AI Vision** | Endpoint + subscription key |
-| **Google Cloud Vision** | API key |
-| **PaddleOCR / custom server** | Endpoint, optional API key/header, request mode |
-
-Paddle supports **PaddleHub JSON (`images[]`)**, **multipart file**, and
-**Gravitee-style `image_url` (`input[]`)** requests. It also supports OAuth2
-client credentials (token URL, client ID, secret, optional scope); OAuth2
-overrides the API-key header.
-
-**Auto** uses a configured cloud provider first (OCR.space, Azure, Google,
-Paddle), then the built-in engine. If a cloud provider is selected explicitly
-and fails, Clippr falls back to the built-in engine and reports the fallback in
-the OCR status instead of losing the operation.
-
-> **Security:** keys are plain text in the local `settings.json`. Do not commit
-> that file; it is already ignored by Git. Use a self-hosted Paddle server if
-> you do not want images leaving your network.
-
-## Build a standalone app
-
-### macOS `.app`
-
-On a Mac:
+Then:
 
 ```bash
 chmod +x build_macos.sh
@@ -153,47 +230,241 @@ chmod +x build_macos.sh
 open dist/Clippr.app
 ```
 
-The script creates a `.icns` from `assets/clippr.png` and bundles assets and
-the OCR helper. Distribution outside your Mac requires an Apple Developer
-account, code signing and notarization (`codesign`, `notarytool`).
+The script creates an `.icns` icon, bundles the assets and OCR helper, and
+produces `dist/Clippr.app` using PyInstaller.
 
-### Windows `.exe`
+For distribution to other Macs you need an Apple Developer account, code
+signing, and notarization (`codesign` and `notarytool`). An unsigned local build
+can be opened with right-click **Open**, but it is not suitable for public
+distribution.
 
-```powershell
-.\build_windows.ps1
+---
+
+## Linux (optional)
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py
 ```
 
-Output: `dist\ClipprPy\ClipprPy.exe`.
+For OCR install Tesseract and `pytesseract`:
 
-## Tests and smoke checks
+```bash
+sudo apt install tesseract-ocr
+python -m pip install pytesseract
+```
+
+A system tray implementation is required for hide-to-tray behavior.
+
+---
+
+## Using Clippr PY
+
+### Capturing clips
+
+- Copy text or an image in any application. It is added to history
+  automatically unless capture is paused.
+- The **CAPTURING** button at top-right pauses/resumes clipboard capture.
+- Tick **Strip images (text only)** to keep only text from mixed
+  text+image clipboard contents (the Excel duplicate-image fix).
+- New clips go to the currently selected custom tab; if a built-in view is
+  selected, they go to the last custom tab.
+
+### New Snip
+
+- Click the red-bordered **NEW SNIP** button next to the Clippr title.
+- Drag a rectangle; release to capture.
+- Press `Esc` to cancel.
+- The snip is saved to history and copied to the clipboard.
+- Shortcut while Clippr PY is focused: `Ctrl+Shift+S` on Windows or
+  `Cmd+Shift+S` on macOS.
+- The tray menu also has **New Snip…**.
+
+Region capture currently covers the **primary display**.
+
+### Preview and OCR
+
+Double-click an entry or select it and click **PREVIEW**.
+
+- **COPY** copies the text or image.
+- **OCR + COPY** runs OCR on an image and copies the recognized text.
+- If OCR uses a fallback provider, the status line tells you.
+- Recognized text is saved on the image item, so search can find it.
+
+### Tabs
+
+- **All items** shows everything.
+- **Text** and **Images** filter by type.
+- Create your own tabs with **+ NEW TAB**.
+- **RENAME TAB** and **DELETE TAB** apply to custom tabs only.
+- Deleting a custom tab also deletes its items.
+
+### Themes
+
+Open **SETTINGS > GENERAL** and choose a theme from the dropdown. Themes apply
+instantly and are remembered:
+
+Swiss Paper, Midnight Brass, Neo-Brutalist, Calm Slate, Forest Ink, Rose
+Quartz, Sunset Ember, and Mono Terminal.
+
+### Tray behavior
+
+Closing the main window hides Clippr PY to the tray and shows a small themed
+toast. Double-click the tray icon (Windows) or use its menu (macOS/Windows) to
+reopen. Use the tray menu to pause capture, create a snip, open settings, or
+quit.
+
+### Start at login
+
+Enable **Start Clippr when I log in** in **Settings > General**:
+
+- Windows: writes a current-user Run entry.
+- macOS: writes a LaunchAgent in `~/Library/LaunchAgents/`.
+- Linux: writes an autostart `.desktop` entry.
+
+The app starts hidden in the tray.
+
+---
+
+## OCR configuration
+
+Open **Settings > OCR**.
+
+### Built-in engines
+
+| Engine | Platform | Notes |
+|---|---|---|
+| **Auto** | All | Apple Vision on macOS; Windows OCR on Windows; Tesseract elsewhere. Native failure falls back to Tesseract. |
+| **Windows OCR** | Windows only | Built into Windows; no key. |
+| **macOS Vision** | macOS only | Apple Vision via PyObjC; no key. |
+| **Tesseract** | All | Requires the Tesseract binary and `pytesseract`. |
+
+If you do not have Windows/macOS native OCR, choose **Tesseract** or a cloud
+provider. Explicit Windows/macOS choices fail clearly on the other platform.
+
+### Bring your own providers
+
+| Provider | What you need |
+|---|---|
+| **OCR.space** | API key; language (`eng`, `deu`, `hin`, etc.) |
+| **Azure AI Vision** | Computer Vision endpoint + subscription key |
+| **Google Cloud Vision** | API key with Cloud Vision enabled |
+| **PaddleOCR / custom server** | Endpoint; optional API key/header; request mode |
+
+Paddle supports:
+
+- **PaddleHub JSON** (`images[]`)
+- **Multipart form** (file upload)
+- **Gravitee / image_url** (`input[]`)
+- OAuth2 client credentials (token URL, client ID, secret, optional scope)
+
+**Auto** uses a configured cloud provider first (OCR.space, Azure, Google,
+Paddle), then built-in OCR. If a selected cloud provider fails, the app falls
+back to built-in OCR and reports the reason. **AUTHENTICATE** runs the selected
+provider on a small test image before you save.
+
+### Auto-name images
+
+Enable **Auto-name new images with OCR** if you want new images named from the
+first OCR line. This may call the selected cloud provider for every new image,
+so leave it off if you want to control API usage.
+
+### Key storage
+
+OCR keys are stored locally in `settings.json` in the app data folder. They are
+plain text on disk, not uploaded anywhere except to the provider you select.
+Never commit `settings.json` or share the app data folder.
+
+---
+
+## Keyboard shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl/Cmd + F` | Focus search |
+| `Ctrl/Cmd + Shift + S` | New Snip |
+| `Delete` (history list focused) | Delete selected item |
+| `Enter` / double-click | Preview selected item |
+
+macOS uses `Cmd` where Windows uses `Ctrl`.
+
+---
+
+## Data and privacy
+
+| Platform | Data folder |
+|---|---|
+| Windows | `%APPDATA%\ClipprPy` |
+| macOS | `~/Library/Application Support/ClipprPy` |
+| Linux | `~/.local/share/ClipprPy` |
+
+Contents:
+
+- `history.json` — clipboard entries, tabs, and OCR text.
+- `settings.json` — theme, limits, OCR provider settings, and keys.
+- `images/` — captured image files.
+
+History is local. Clippr PY does not upload clipboard contents unless you
+configure a cloud OCR provider and run OCR. The standalone app uses a separate
+folder from the original PowerShell Clippr, so the two histories do not mix.
+
+To reset the app, quit it, rename or remove that data folder, and restart. This
+deletes local history and settings.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `python`/`py` is not recognized | Reinstall Python with PATH enabled, or use the full Python launcher path. |
+| `ModuleNotFoundError: PyQt6` | Activate the virtual environment and run `pip install -r requirements.txt` (or `-r requirements-macos.txt`). |
+| PowerShell will not activate `.venv` | Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`, then activate again. |
+| New Snip is empty on macOS | Enable Screen Recording permission for Terminal/Python/Clippr and restart the app. |
+| OCR says no engine/key | Choose a configured provider in **Settings > OCR**, install Tesseract, or install the Windows OCR language pack. |
+| `Authentication failed` | Check the key, endpoint, header, and network access; try **Built-in** first. |
+| A second launch does nothing | Clippr PY is single-instance; the existing window is brought to the front. |
+| Theme/keys do not persist | Check write access to the data folder. |
+| App was built on the wrong OS | Build Windows `.exe` on Windows and macOS `.app` on macOS; PyInstaller cannot cross-compile these. |
+
+---
+
+## Tests
+
+Run from the project root:
 
 ```bash
 python tests/test_store.py
 python tests/test_themes.py
 python tests/test_ui_logic.py
-python tests/test_ocr_config.py      # provider resolution, parsers, fallback
-python tests/test_settings_ocr.py    # OCR settings tab + Authenticate
+python tests/test_ocr_config.py
+python tests/test_settings_ocr.py
 python tests/test_clipboard.py       # saves/restores the real clipboard
-python tests/test_ocr_preview.py     # Windows/macOS OCR + clipboard restore
+python tests/test_ocr_preview.py     # OCR + clipboard restore
 python tests/smoke_gui.py            # renders all eight themes
 python tests/smoke_dialogs.py        # preview + settings dialogs
 python tests/smoke_app.py            # tray, toast, persistence
 ```
 
-Pause or quit other clipboard managers before running the clipboard tests;
-otherwise they may record the temporary test clips. The tests snapshot and
-restore the current clipboard in a `finally` block. The GUI smoke scripts use
-sample data and temporary folders; they never read the live Clippr history.
+Pause or quit other clipboard managers before the clipboard tests. The tests
+use temporary data folders and restore the clipboard in a `finally` block.
+
+---
 
 ## Known limitations
 
-- Region capture covers the **primary display**; multi-monitor capture is not
-  implemented.
-- No global hotkey yet; use the tray or `Ctrl/Cmd + Shift + S` while the window
-  is focused.
-- No import of the PowerShell edition's `clippr.json` history.
-- macOS builds must be signed/notarized for warning-free distribution.
+- New Snip captures the primary display only; multi-monitor region selection is
+  not implemented yet.
+- There is no system-wide hotkey while another app is focused; the shortcut
+  works when the Clippr PY window is focused.
+- The original PowerShell edition's `clippr.json` history is not imported.
+- macOS builds need a Mac for final testing, signing, and notarization.
+- Auto-name with a cloud provider can consume API quota; it is optional.
+
+---
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See [`LICENSE`](LICENSE).
